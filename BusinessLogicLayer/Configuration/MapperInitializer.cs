@@ -13,6 +13,7 @@ namespace BusinessLogicLayer.Configuration
             CreateMap<User, GetUserDto>().ReverseMap();
             CreateMap<Role, GetRoleDto>().ReverseMap();
             CreateMap<Tenant, TenantDTO>().ReverseMap();
+            CreateMap<Tenant, GetTenantDto>().ReverseMap();
             CreateMap<TransactionBeneficiary, CreateTransactionBeneficiaryDto>().ReverseMap();
             CreateMap<TransactionBeneficiary, GetTransactionBeneficiaryDto>().ReverseMap();
             CreateMap<Transaction, CreateTransactionDto>().ReverseMap();

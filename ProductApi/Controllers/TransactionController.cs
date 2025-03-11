@@ -1,11 +1,13 @@
 ﻿using BusinessLogicLayer.IServices;
 using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OptiBizApi.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class TransactionController : ControllerBase
     {
         ITransactionService transactionService;

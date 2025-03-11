@@ -1,11 +1,13 @@
 ﻿using BusinessLogicLayer.IServices;
 using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OptiBizApi.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -34,9 +36,9 @@ namespace OptiBizApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTenants()
+        public async Task<IActionResult> GetTenants()
         {
-            return Ok(userService.GetAllTenants());
+            return Ok(await userService.GetAllTenants());
         }
 
 
@@ -48,6 +50,7 @@ namespace OptiBizApi.Controllers
 
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Create(CreateUserDto createUserDto)
         {
             (GetUserDto?, string message) result = await userService.CreateUser(createUserDto);

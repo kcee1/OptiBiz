@@ -25,6 +25,11 @@ namespace DataAccessLayer.Repositories
            return await _userManager.FindByIdAsync(id);
         }
 
+        public async Task<User?> getUserbyUserName(string userName)
+        {
+           return await _userManager.FindByNameAsync(userName);
+        }
+
 
         public async Task<User?> createUser(User user)
         {

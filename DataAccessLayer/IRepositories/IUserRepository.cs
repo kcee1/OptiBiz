@@ -14,5 +14,7 @@ namespace DataAccessLayer.IRepositories
         Task<bool> RemoveUserFromRole(User user, string roleName);
         Task<(bool, string message)> DebitUser(string userId, decimal amount);
 
+        Task<User?> getUserbyUserName(string userName);
+
     }
 }

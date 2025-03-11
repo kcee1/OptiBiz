@@ -157,6 +157,12 @@ namespace BusinessLogicLayer.Services
 
         }
 
+        public async Task<GetUserDto> GetUserbyEmail(string email)
+        {
+            return mapper.Map<GetUserDto>(await userRepository.getUserbyUserName(email));
+
+        }
+
         public IList<GetUserDto> Users()
         {
             return mapper.Map<IList<GetUserDto>>(userRepository.users());

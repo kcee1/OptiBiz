@@ -5,10 +5,20 @@ using DataAccessLayer.IRepositories;
 using DataAccessLayer.Repositories;
 using DataAccessLayer.UnitOfWorkFolder;
 using Domain.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using OptiBizApi.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Basic Authentication service
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddAuthorization();
+
 
 // Add services to the container.
 builder.Services.
@@ -53,14 +63,43 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OptiBiz Api", Version = "v1" });
+
+    // Add Basic Auth support
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter your user name and password",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            }, new string[] {} }
+    });
+});
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging") || app.Environment.IsProduction())
 {
+    // Enable middle-ware for serving generated Swagger as a JSON endpoint.
     app.UseSwagger();
+
+    // Enable middle-ware to serve swagger-ui (HTML, JS, CSS, etc.)
     app.UseSwaggerUI();
 }
 

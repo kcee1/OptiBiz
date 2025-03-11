@@ -19,6 +19,8 @@ namespace BusinessLogicLayer.IServices
 
         Task<IList<GetTenantDto>> GetAllTenants();
 
+        Task<GetUserDto> GetUserbyEmail(string email);
+
 
 
 

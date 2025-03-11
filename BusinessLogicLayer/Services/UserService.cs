@@ -10,6 +10,7 @@ namespace BusinessLogicLayer.Services
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Tenant> _tenantRepository;
         private readonly IUnitOfWork _iUnitOfWork;
         private readonly IUserRepository userRepository;
         IMapper mapper;
@@ -22,6 +23,7 @@ namespace BusinessLogicLayer.Services
         {
             _iUnitOfWork = unitOfWork;
             _userRepository = _iUnitOfWork.GetRepository<User>();
+            _tenantRepository = _iUnitOfWork.GetRepository<Tenant>();
             this.mapper = mapper;
             this.userRepository = userRepository;
         }
@@ -58,7 +60,8 @@ namespace BusinessLogicLayer.Services
                 return (null, "Tax Identification Number is required");
             }
 
-            if (string.IsNullOrWhiteSpace(createUserDto.TenantDTO.BankVerificationCode) || createUserDto.TenantDTO.BankVerificationCode.Length != 11)
+            if (string.IsNullOrWhiteSpace(createUserDto.TenantDTO.BankVerificationCode) 
+                || createUserDto.TenantDTO.BankVerificationCode.Length != 11)
             {
                 return (null, "Bvn is required");
             }
@@ -79,16 +82,24 @@ namespace BusinessLogicLayer.Services
                 return (null, "Email is required");
             }
 
+            Tenant resultOfTenantMapping = mapper.Map<Tenant>(createUserDto.TenantDTO);
             User resultOfMapping = mapper.Map<User>(createUserDto);
 
+
+            Tenant resultOfCreatingTenant = _tenantRepository.Add(resultOfTenantMapping);
+           
+                
             resultOfMapping.CreatedAt = DateTime.UtcNow;
             resultOfMapping.AccountBalance = 0;
             resultOfMapping.IsEmailVerified = false;
             resultOfMapping.AccountNumber = _random.Next(1000000000, 1999999999).ToString();
+            resultOfMapping.TenantId = resultOfCreatingTenant.Id;
 
             User? outcome = await userRepository.createUser(resultOfMapping);
 
-            if(outcome is null)
+            _tenantRepository.Save();
+
+            if (outcome is null)
             {
                 return (null, "Unable to create user");
 

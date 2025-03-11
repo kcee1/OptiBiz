@@ -9,10 +9,13 @@ namespace OptiBizApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
+        private readonly IUserVerificationService userVerificationService;
 
-        public UserController(IUserService userService)
+
+        public UserController(IUserService userService, IUserVerificationService userVerificationService)
         {
             this.userService = userService;
+            this.userVerificationService = userVerificationService;
         }
 
 
@@ -75,6 +78,37 @@ namespace OptiBizApi.Controllers
             }
 
             return Ok("Assigned Successfully");
+
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> SendOtp(string userId, string email)
+        {
+            (bool, string message) result = await userVerificationService.CreateOtp(userId, email);
+
+            if (result.Item1)
+            {
+                return Ok(result.message);
+            }
+
+            return BadRequest(result.message);
+
+
+        }
+
+         [HttpGet]
+        public async Task<IActionResult> VerifyOtp(string userId, string email)
+        {
+            bool result = await userVerificationService.VerifyOtp(userId, email);
+
+            if (result)
+            {
+                return Ok("Verified Successfully");
+            }
+
+            return BadRequest("Invalid Otp");
 
 
         }

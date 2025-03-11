@@ -11,13 +11,16 @@ namespace BusinessLogicLayer.Services
     public class TransactionService : ITransactionService
     {
         private readonly IRepository<Transaction> _transactionRepository;
+        private readonly IRepository<TransactionBeneficiary> _transactionBeneficiaryRepository;
         private readonly IUnitOfWork _iUnitOfWork;
+        private static readonly Random _random = new Random();
         IMapper mapper;
 
         public TransactionService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _iUnitOfWork = unitOfWork;
             _transactionRepository = _iUnitOfWork.GetRepository<Transaction>();
+            _transactionBeneficiaryRepository = _iUnitOfWork.GetRepository<TransactionBeneficiary>();
             this.mapper = mapper;
         }
 
@@ -47,19 +50,21 @@ namespace BusinessLogicLayer.Services
                 }
             }
 
-            //Fetch USer Details and verify he has money
+            //Fetch User Details and verify he has money
             //Verify Tenant is valid And Get Tenant Details
             //Verify Initiators Name
 
-            Random rnd = new Random(222222);
-            
-
+        
             Transaction mappedResult = mapper.Map<Transaction>(transaction);
             mappedResult.Status = TransactionStatus.Pending;
             mappedResult.CreatedAt = DateTime.UtcNow;
-            mappedResult.ReferenceNumber = "OPTIBIZ" + rnd;
+            mappedResult.ReferenceNumber = "OPTIBIZ" + _random.Next(222222, 999999).ToString(); ;
 
-            return (mapper.Map<GetTransactionDto>(await _transactionRepository.AddAsync(mappedResult)), "Transaction Initiated Successfully");
+            GetTransactionDto getTransactionDto = mapper.Map<GetTransactionDto>(await _transactionRepository.AddAsync(mappedResult));
+
+            await _transactionRepository.SaveAsync();
+           
+            return (getTransactionDto, "Transaction Initiated Successfully");
 
         }
 

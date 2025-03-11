@@ -20,6 +20,8 @@ builder.Services.
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<IEmailSender, EmailServiceImplementation>();
+builder.Services.AddScoped<IUserVerificationService, UserVerificationService>();
 builder.Services
     .AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
 

@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
         public string ReferenceNumber { get; set; }
-        public int InitiatorId { get; set; }
-        public int? ApproverId { get; set; }
+        public string InitiatorId { get; set; }
+        public string? ApproverId { get; set; }
         public decimal Amount { get; set; }
         public string Status { get; set; }
         public string Type { get; set; }

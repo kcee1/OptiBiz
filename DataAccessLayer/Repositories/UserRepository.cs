@@ -62,6 +62,33 @@ namespace DataAccessLayer.Repositories
             return theUser;
         }
 
+        public async Task<(bool, string message)> DebitUser(string userId, decimal amount)
+        {
+            User? theUser = await _userManager.FindByIdAsync(userId);
+
+            if (theUser == null)
+            {
+                return (false, "Invalid user");
+            }
+
+            if(theUser.AccountBalance < amount)
+            {
+                return (false, "Insufficient Balance");
+            }
+
+            theUser.AccountBalance -= amount;
+
+            IdentityResult result = await _userManager
+                .UpdateAsync(theUser);
+
+            if (!result.Succeeded)
+            {
+                return (true, "Debited Successfully");
+            }
+
+            return (false, "Could not process this transaction");
+        }
+
 
         public async Task<bool> deleteUser(User user)
         {

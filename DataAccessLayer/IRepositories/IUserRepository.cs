@@ -12,7 +12,7 @@ namespace DataAccessLayer.IRepositories
         Task<bool> AddUserToRole(User user, string roleName);
 
         Task<bool> RemoveUserFromRole(User user, string roleName);
-
+        Task<(bool, string message)> DebitUser(string userId, decimal amount);
 
     }
 }

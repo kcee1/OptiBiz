@@ -13,15 +13,17 @@ namespace BusinessLogicLayer.Services
         private readonly IRepository<Transaction> _transactionRepository;
         private readonly IRepository<TransactionBeneficiary> _transactionBeneficiaryRepository;
         private readonly IUnitOfWork _iUnitOfWork;
+        private readonly IUserRepository userRepository;
         private static readonly Random _random = new Random();
         IMapper mapper;
 
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository)
         {
             _iUnitOfWork = unitOfWork;
             _transactionRepository = _iUnitOfWork.GetRepository<Transaction>();
             _transactionBeneficiaryRepository = _iUnitOfWork.GetRepository<TransactionBeneficiary>();
             this.mapper = mapper;
+            this.userRepository = userRepository;
         }
 
         public async Task<(GetTransactionDto?,string message)> createTransactions(CreateTransactionDto transaction)
@@ -50,21 +52,28 @@ namespace BusinessLogicLayer.Services
                 }
             }
 
-            //Fetch User Details and verify he has money
-            //Verify Tenant is valid And Get Tenant Details
-            //Verify Initiators Name
 
-        
-            Transaction mappedResult = mapper.Map<Transaction>(transaction);
-            mappedResult.Status = TransactionStatus.Pending;
-            mappedResult.CreatedAt = DateTime.UtcNow;
-            mappedResult.ReferenceNumber = "OPTIBIZ" + _random.Next(222222, 999999).ToString(); ;
+            (bool, string message) theResult = await userRepository.DebitUser(transaction.InitiatorId, transaction.Amount);
+            if (theResult.Item1)
+            {
+                Transaction mappedResult = mapper.Map<Transaction>(transaction);
+                mappedResult.Status = TransactionStatus.Pending;
+                mappedResult.CreatedAt = DateTime.UtcNow;
+                mappedResult.ReferenceNumber = "OPTIBIZ" + _random.Next(222222, 999999).ToString(); ;
 
-            GetTransactionDto getTransactionDto = mapper.Map<GetTransactionDto>(await _transactionRepository.AddAsync(mappedResult));
+                GetTransactionDto getTransactionDto = mapper.Map<GetTransactionDto>(await _transactionRepository.AddAsync(mappedResult));
 
-            await _transactionRepository.SaveAsync();
-           
-            return (getTransactionDto, "Transaction Initiated Successfully");
+                await _transactionRepository.SaveAsync();
+
+                return (getTransactionDto, "Transaction Initiated Successfully");
+
+
+            }
+
+
+            return (null, theResult.message);
+
+
 
         }
 

@@ -105,6 +105,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging") 
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

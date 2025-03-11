@@ -7,7 +7,7 @@ namespace OptiBizApi.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-  //  [Authorize]
+    [Authorize(AuthenticationSchemes = "BasicAuthentication")]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;

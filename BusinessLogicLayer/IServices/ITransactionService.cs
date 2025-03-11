@@ -6,7 +6,7 @@ namespace BusinessLogicLayer.IServices
     {
         Task<IList<GetTransactionDto>> transactions();
         Task<(GetTransactionDto?, string message)> createTransactions(CreateTransactionDto transaction);
-        Task<GetTransactionDto> transaction(int id);
+        Task<GetTransactionDto?> transaction(int id);
         Task<GetTransactionDto?> updatedTransaction(int id);
 
 

@@ -21,14 +21,21 @@ namespace OptiBizApi.Controllers
 
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAllUsers()
         {
             return Ok(userService.Users());
         }
 
 
+        [HttpGet]
+        public IActionResult GetTenantUsers(int tenantId)
+        {
+            return Ok(userService.GetTenantUser(tenantId));
+        }
+
+
         [HttpGet("id")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             return Ok(await userService.User(id));
         }

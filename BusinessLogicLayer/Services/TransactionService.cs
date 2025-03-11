@@ -81,6 +81,14 @@ namespace BusinessLogicLayer.Services
             return mapper.Map<IList<GetTransactionDto>>(await _transactionRepository.GetAllAsync());
         }
 
+
+         public async Task<IList<GetTransactionDto>> getAllTransactions(int tenantId)
+        {
+            return mapper.Map<IList<GetTransactionDto>>(await _transactionRepository.GetByAsync(q => q.TenantId == tenantId));
+        }
+
+
+
         public Task<GetTransactionDto> updatedTransaction(int id)
         {
             throw new NotImplementedException();

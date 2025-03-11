@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepositories;
+using DataAccessLayer.Repositories;
 using DataAccessLayer.UnitOfWorkFolder;
 using Domain.Models;
 using static System.Net.WebRequestMethods;
@@ -16,13 +17,17 @@ namespace BusinessLogicLayer.Services
         private readonly IEmailSender _mail;
         IMapper mapper;
 
-        public UserVerificationService(IRepository<UserVerification> userVerificationRepository,
+        public UserVerificationService(
             IUserRepository userRepository,
-            IEmailSender mail)
+            IEmailSender mail, 
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
-            _userVerificationRepository = userVerificationRepository;
+            _iUnitOfWork = unitOfWork;
+            _userVerificationRepository = _iUnitOfWork.GetRepository<UserVerification>();
             this.userRepository = userRepository;
             _mail = mail;
+            this.mapper = mapper;
         }
 
         public async Task<(bool, string message)> CreateOtp(string userId, string email)

@@ -20,10 +20,13 @@ builder.Services.
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddSingleton<IEmailSender, EmailServiceImplementation>();
+builder.Services.AddScoped<IEmailSender, EmailServiceImplementation>();
+EmailDetails? emailCon = builder.Configuration.GetSection("EmailDetails").Get<EmailDetails>();
+
 builder.Services.AddScoped<IUserVerificationService, UserVerificationService>();
 builder.Services
     .AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
+builder.Services.AddSingleton(emailCon);
 
 
 

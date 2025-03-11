@@ -15,7 +15,7 @@ namespace BusinessLogicLayer.IServices
         Task<bool> AssignUserToRole(string id, string roleName);
        
         Task<bool> RemoveUserFromRole(string id, string roleName);
-
+        IList<GetUserDto> GetTenantUser(int tenantId);
 
 
 

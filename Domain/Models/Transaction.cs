@@ -18,6 +18,8 @@ namespace Domain.Models
         public string InitiatorsName { get; set; }
 
         public string ApproverName { get; set; }
+        public int TenantId { get; set; }
+
         public ICollection<TransactionBeneficiary> Beneficiaries { get; set; }
     }
 }

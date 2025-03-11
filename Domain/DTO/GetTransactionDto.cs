@@ -12,5 +12,6 @@
         public DateTime CreatedAt { get; set; }
         public DateTime? ApprovedAt { get; set; }
         public List<GetTransactionBeneficiaryDto> Beneficiaries { get; set; }
+        public int TenantId { get; set; }
     }
 }

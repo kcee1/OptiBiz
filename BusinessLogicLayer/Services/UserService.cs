@@ -162,6 +162,12 @@ namespace BusinessLogicLayer.Services
             return mapper.Map<IList<GetUserDto>>(userRepository.users());
         }
 
+        public async Task<IList<GetTenantDto>> GetAllTenants()
+        {
+            return mapper.Map<IList<GetTenantDto>>(await _tenantRepository.GetAllAsync());
+        }
+
+
         public IList<GetUserDto> GetTenantUser(int tenantId)
         {
             return mapper.Map<IList<GetUserDto>>(_userRepository.GetSingleByAsync(q => q.TenantId == tenantId));

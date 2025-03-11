@@ -33,6 +33,12 @@ namespace OptiBizApi.Controllers
             return Ok(userService.GetTenantUser(tenantId));
         }
 
+        [HttpGet]
+        public IActionResult GetTenants()
+        {
+            return Ok(userService.GetAllTenants());
+        }
+
 
         [HttpGet("id")]
         public async Task<IActionResult> GetUserById(string id)

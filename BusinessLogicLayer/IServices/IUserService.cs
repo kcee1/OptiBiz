@@ -17,6 +17,7 @@ namespace BusinessLogicLayer.IServices
         Task<bool> RemoveUserFromRole(string id, string roleName);
         IList<GetUserDto> GetTenantUser(int tenantId);
 
+        Task<IList<GetTenantDto>> GetAllTenants();
 
 
 

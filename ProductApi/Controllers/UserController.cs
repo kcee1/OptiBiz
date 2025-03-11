@@ -44,7 +44,7 @@ namespace OptiBizApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto createUserDto)
         {
-            (CreateUserDto?, string message) result = await userService.CreateUser(createUserDto);
+            (GetUserDto?, string message) result = await userService.CreateUser(createUserDto);
 
             if(result.Item1 == null)
             {

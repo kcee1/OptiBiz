@@ -7,7 +7,7 @@ namespace OptiBizApi.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -30,9 +30,9 @@ namespace OptiBizApi.Controllers
 
 
         [HttpGet]
-        public IActionResult GetTenantUsers(int tenantId)
+        public async Task<IActionResult> GetTenantUsers(int tenantId)
         {
-            return Ok(userService.GetTenantUser(tenantId));
+            return Ok(await userService.GetTenantUser(tenantId));
         }
 
         [HttpGet]
@@ -42,7 +42,7 @@ namespace OptiBizApi.Controllers
         }
 
 
-        [HttpGet("id")]
+        [HttpGet]
         public async Task<IActionResult> GetUserById(string id)
         {
             return Ok(await userService.User(id));

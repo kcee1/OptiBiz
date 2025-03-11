@@ -4,7 +4,7 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IUserService
     {
-        IList<GetUserDto> Users();
+        List<GetUserDto> Users();
 
         Task<GetUserDto> User(string id);
 
@@ -15,10 +15,9 @@ namespace BusinessLogicLayer.IServices
         Task<bool> AssignUserToRole(string id, string roleName);
        
         Task<bool> RemoveUserFromRole(string id, string roleName);
-        IList<GetUserDto> GetTenantUser(int tenantId);
+        Task<IList<GetUserDto>> GetTenantUser(int tenantId);
 
         Task<IList<GetTenantDto>> GetAllTenants();
-
         Task<GetUserDto> GetUserbyEmail(string email);
 
 

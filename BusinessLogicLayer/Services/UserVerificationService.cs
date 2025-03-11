@@ -73,12 +73,21 @@ namespace BusinessLogicLayer.Services
 
         public async Task<bool> VerifyOtp(string userId, string Otp)
         {
-            UserVerification userVerification = await _userVerificationRepository.GetSingleByAsync(q => q.UserId == userId && q.OTP == Otp);
+            UserVerification userVerification = await _userVerificationRepository.GetSingleByAsync(q => q.UserId == userId && q.OTP == Otp && q.ExpiryTime >= DateTime.UtcNow);
             
             if(userVerification is null)
             {
                 return false;
             }
+
+            if (userVerification.IsUsed)
+            {
+                return false;
+            }
+
+            userVerification.IsUsed = true;
+            await _userVerificationRepository.UpdateAsync(userVerification);
+            await _userVerificationRepository.SaveAsync();
 
             return true;
         

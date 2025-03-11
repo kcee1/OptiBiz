@@ -137,12 +137,13 @@ namespace BusinessLogicLayer.Services
             return false;
         }
 
+
         public async Task<(bool, string message)> UpdateUser(string id)
         {
             User? theUser = await userRepository.UpdateUser(id);
             if (theUser == null)
             {
-                return (false, "Unable to update user information");
+                return (false, "Invalid user Id");
             }
 
             return (true, "Updated successfully");

@@ -51,7 +51,7 @@ namespace OptiBizApi.Controllers
                 return BadRequest(result.message);
             }
 
-            //Send Otp
+            
             return Ok(result.Item1);
 
         }
@@ -105,14 +105,37 @@ namespace OptiBizApi.Controllers
 
         }
 
-         [HttpGet]
-        public async Task<IActionResult> VerifyOtp(string userId, string email)
+        [HttpGet]
+        public async Task<IActionResult> VerifyOtp(string userId, string Otp)
         {
-            bool result = await userVerificationService.VerifyOtp(userId, email);
+            bool result = await userVerificationService.VerifyOtp(userId, Otp);
 
             if (result)
             {
                 return Ok("Verified Successfully");
+            }
+
+            return BadRequest("Invalid Otp");
+
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyEmail(string userId, string Otp)
+        {
+            bool result = await userVerificationService.VerifyOtp(userId, Otp);
+
+            if (result)
+            {
+                (bool, string message) theResult = await userService.UpdateUser(userId);
+                if (theResult.Item1)
+                {
+                    return Ok(theResult.message);
+                }
+
+                return BadRequest("Invalid Otp");
+
             }
 
             return BadRequest("Invalid Otp");

@@ -47,6 +47,32 @@ namespace DataAccessLayer.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "9192a7bd-7f4e-4ebe-8933-ea68650d8dd6",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "78572082-900a-4d8b-beb8-a4131a14ee68",
+                            Name = "Initiator",
+                            NormalizedName = "INITIATOR"
+                        },
+                        new
+                        {
+                            Id = "1c2f1377-526d-4ad6-8e50-b2f8755b4993",
+                            Name = "Approver",
+                            NormalizedName = "APPROVER"
+                        },
+                        new
+                        {
+                            Id = "93119b88-9d2c-49c8-ba3a-1974231da45d",
+                            Name = "Viewer",
+                            NormalizedName = "VIEWER"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Tenant", b =>

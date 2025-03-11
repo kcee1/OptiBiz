@@ -27,13 +27,24 @@ namespace OptiBizApi.Controllers
 
 
         /// <summary>
+        /// Gets all transaction
+        /// </summary>
+        /// <returns>List of transactions</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersForTenant(int tenantId)
+        {
+            return Ok(await transactionService.transactions());
+        }
+
+
+        /// <summary>
         /// Get transaction
         /// </summary>
         /// <returns>Transactions</returns>
         [HttpGet("id")] 
         public async Task<IActionResult> Get(int id)
         {
-            GetTransactionDto result = await transactionService.transaction(id);
+            GetTransactionDto? result = await transactionService.transaction(id);
             
             if(result is null)
             {

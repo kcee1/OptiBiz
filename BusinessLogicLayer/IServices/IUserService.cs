@@ -8,7 +8,7 @@ namespace BusinessLogicLayer.IServices
 
         Task<GetUserDto> User(string id);
 
-        Task<(CreateUserDto?, string message)> CreateUser(CreateUserDto createUserDto);
+        Task<(GetUserDto?, string message)> CreateUser(CreateUserDto createUserDto);
        
         Task<(bool, string message)> UpdateUser(string id);
        

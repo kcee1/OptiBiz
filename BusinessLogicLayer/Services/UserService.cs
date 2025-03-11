@@ -43,7 +43,7 @@ namespace BusinessLogicLayer.Services
         }
 
 
-        public async Task<(CreateUserDto?, string message)> CreateUser(CreateUserDto createUserDto)
+        public async Task<(GetUserDto?, string message)> CreateUser(CreateUserDto createUserDto)
         {
             if (string.IsNullOrWhiteSpace(createUserDto.TenantDTO.BusinessType))
             {
@@ -63,7 +63,7 @@ namespace BusinessLogicLayer.Services
             if (string.IsNullOrWhiteSpace(createUserDto.TenantDTO.BankVerificationCode) 
                 || createUserDto.TenantDTO.BankVerificationCode.Length != 11)
             {
-                return (null, "Bvn is required");
+                return (null, "Bvn is required and must be 11 digits");
             }
 
             if (string.IsNullOrWhiteSpace(createUserDto.FirstName))
@@ -82,21 +82,31 @@ namespace BusinessLogicLayer.Services
                 return (null, "Email is required");
             }
 
+            if (string.IsNullOrWhiteSpace(createUserDto.Password))
+            {
+                return (null, "Password is required");
+            }
+
             Tenant resultOfTenantMapping = mapper.Map<Tenant>(createUserDto.TenantDTO);
-            User resultOfMapping = mapper.Map<User>(createUserDto);
+            User resultOfMapping = new User();
 
 
             Tenant resultOfCreatingTenant = _tenantRepository.Add(resultOfTenantMapping);
-           
-                
+            _tenantRepository.Save();
+
+            resultOfMapping.FirstName = createUserDto.FirstName;
+            resultOfMapping.LastName = createUserDto.LastName;
+            resultOfMapping.Email = createUserDto.Email;
+            resultOfMapping.PasswordHash = createUserDto.Password;
+            resultOfMapping.UserName = createUserDto.Email;
             resultOfMapping.CreatedAt = DateTime.UtcNow;
             resultOfMapping.AccountBalance = 0;
             resultOfMapping.IsEmailVerified = false;
             resultOfMapping.AccountNumber = _random.Next(1000000000, 1999999999).ToString();
             resultOfMapping.TenantId = resultOfCreatingTenant.Id;
-
+            resultOfMapping.Id = Guid.NewGuid().ToString();
             User? outcome = await userRepository.createUser(resultOfMapping);
-
+            
             _tenantRepository.Save();
 
             if (outcome is null)
@@ -105,7 +115,11 @@ namespace BusinessLogicLayer.Services
 
             }
 
-            return (mapper.Map<CreateUserDto>(outcome), "Created successfully");
+            await AssignUserToRole(outcome.Id, createUserDto.Role);
+
+            GetUserDto result = mapper.Map<GetUserDto>(outcome);
+            result.Role = createUserDto.Role;
+            return (result, "Created successfully");
         }
 
 

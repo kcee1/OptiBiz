@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
@@ -33,7 +35,8 @@ namespace DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BusinessNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TaxIdentificationNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BusinessType = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BusinessType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BankVerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -72,6 +75,7 @@ namespace DataAccessLayer.Migrations
                     IsEmailVerified = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TenantId = table.Column<int>(type: "int", nullable: false),
+                    AccountBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -199,6 +203,7 @@ namespace DataAccessLayer.Migrations
                     ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     InitiatorsName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ApproverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
@@ -223,18 +228,17 @@ namespace DataAccessLayer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OTP = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsUsed = table.Column<bool>(type: "bit", nullable: false),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserVerifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserVerifications_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_UserVerifications_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -259,6 +263,17 @@ namespace DataAccessLayer.Migrations
                         principalTable: "Transactions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1c2f1377-526d-4ad6-8e50-b2f8755b4993", null, "Approver", "APPROVER" },
+                    { "78572082-900a-4d8b-beb8-a4131a14ee68", null, "Initiator", "INITIATOR" },
+                    { "9192a7bd-7f4e-4ebe-8933-ea68650d8dd6", null, "Admin", "ADMIN" },
+                    { "93119b88-9d2c-49c8-ba3a-1974231da45d", null, "Viewer", "VIEWER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -321,9 +336,9 @@ namespace DataAccessLayer.Migrations
                 column: "UserId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserVerifications_UserId1",
+                name: "IX_UserVerifications_UserId",
                 table: "UserVerifications",
-                column: "UserId1");
+                column: "UserId");
         }
 
         /// <inheritdoc />

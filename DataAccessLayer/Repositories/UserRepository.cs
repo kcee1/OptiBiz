@@ -36,7 +36,7 @@ namespace DataAccessLayer.Repositories
                 return null;
             }
 
-            return user;
+            return await _userManager.FindByIdAsync(user.Id);
         }
 
          public async Task<User?> UpdateUser(string id)

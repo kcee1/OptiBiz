@@ -7,7 +7,7 @@ namespace Domain.DTO
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Role { get; set; } // Admin, Initiator, Approver, Viewer
-
+        public string Password { get; set; }
         public TenantDTO TenantDTO { get; set; }
 
 
